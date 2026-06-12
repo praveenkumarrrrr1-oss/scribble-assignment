@@ -3,7 +3,17 @@ export type ParticipantRole = "drawer" | "guesser";
 export interface Participant {
   id: string;
   name: string;
+  score: number;
   joinedAt: string;
+}
+
+export interface Guess {
+  id: string;
+  participantId: string;
+  participantName: string;
+  text: string;
+  isCorrect: boolean;
+  createdAt: string;
 }
 
 export interface RoomSnapshot {
@@ -16,6 +26,9 @@ export interface RoomSnapshot {
   drawerId?: string;
   viewerRole?: ParticipantRole;
   secretWord?: string;
+  guesses: Guess[];
+  canvasCleared: boolean;
+  canRestartGame: boolean;
 }
 
 export interface RoomSessionResponse {
@@ -64,6 +77,24 @@ export const api = {
   },
   startRoom(code: string, participantId: string) {
     return request<{ room: RoomSnapshot }>(`/rooms/${encodeURIComponent(code)}/start`, {
+      method: "POST",
+      body: JSON.stringify({ participantId })
+    });
+  },
+  submitGuess(code: string, participantId: string, guessText: string) {
+    return request<{ room: RoomSnapshot }>(`/rooms/${encodeURIComponent(code)}/guess`, {
+      method: "POST",
+      body: JSON.stringify({ participantId, guessText })
+    });
+  },
+  clearCanvas(code: string, participantId: string) {
+    return request<{ room: RoomSnapshot }>(`/rooms/${encodeURIComponent(code)}/clear-canvas`, {
+      method: "POST",
+      body: JSON.stringify({ participantId })
+    });
+  },
+  restartRoom(code: string, participantId: string) {
+    return request<{ room: RoomSnapshot }>(`/rooms/${encodeURIComponent(code)}/restart`, {
       method: "POST",
       body: JSON.stringify({ participantId })
     });
