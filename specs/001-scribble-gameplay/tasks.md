@@ -14,11 +14,11 @@
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-- [ ] T004 Implement backend room lifecycle validation in `backend/src/api/schemas.ts`
-- [ ] T005 [P] Add typed room and participant models for gameplay state in `backend/src/models/game.ts`
-- [ ] T006 [P] Extend the room store service to support snapshot projection and room saves in `backend/src/services/roomStore.ts`
-- [ ] T007 [P] Add frontend room session and polling state support in `frontend/src/state/roomStore.ts`
-- [ ] T008 [P] Add room snapshot request handling in `frontend/src/services/api.ts`
+- [X] T004 Implement backend room lifecycle validation in `backend/src/api/schemas.ts`
+- [X] T005 [P] Add typed room and participant models for gameplay state in `backend/src/models/game.ts`
+- [X] T006 [P] Extend the room store service to support snapshot projection and room saves in `backend/src/services/roomStore.ts`
+- [X] T007 [P] Add frontend room session and polling state support in `frontend/src/state/roomStore.ts`
+- [X] T008 [P] Add room snapshot request handling in `frontend/src/services/api.ts`
 
 ---
 
@@ -28,14 +28,14 @@
 
 **Independent Test**: Create a room with one player, join from a second player, refresh the lobby, and verify host start restrictions.
 
-- [ ] T009 [US1] Add room host assignment and participant metadata to `backend/src/services/roomStore.ts`
-- [ ] T010 [US1] Add new `POST /rooms/:code/start` route in `backend/src/api/rooms.ts`
-- [ ] T011 [US1] Add host-only game start validation to `backend/src/api/rooms.ts`
-- [ ] T012 [US1] Update `backend/src/api/schemas.ts` to validate `participantId` for start requests
-- [ ] T013 [US1] Update `frontend/src/pages/LobbyPage.tsx` to disable the Start button for non-host viewers and show a host-only start message
-- [ ] T014 [US1] Add polling-based lobby refresh to `frontend/src/pages/LobbyPage.tsx` via `roomStore.fetchRoom()`
-- [ ] T015 [US1] Add invalid room code and join validation handling in `frontend/src/pages/JoinRoomPage.tsx`
-- [ ] T016 [US1] Create a lobby error display path for refresh and start failure in `frontend/src/pages/LobbyPage.tsx`
+- [X] T009 [US1] Add room host assignment and participant metadata to `backend/src/services/roomStore.ts`
+- [X] T010 [US1] Add new `POST /rooms/:code/start` route in `backend/src/api/rooms.ts`
+- [X] T011 [US1] Add host-only game start validation to `backend/src/api/rooms.ts`
+- [X] T012 [US1] Update `backend/src/api/schemas.ts` to validate `participantId` for start requests
+- [X] T013 [US1] Update `frontend/src/pages/LobbyPage.tsx` to disable the Start button for non-host viewers and show a host-only start message
+- [X] T014 [US1] Add polling-based lobby refresh to `frontend/src/pages/LobbyPage.tsx` via `roomStore.fetchRoom()`
+- [X] T015 [US1] Add invalid room code and join validation handling in `frontend/src/pages/JoinRoomPage.tsx`
+- [X] T016 [US1] Create a lobby error display path for refresh and start failure in `frontend/src/pages/LobbyPage.tsx`
 
 ---
 

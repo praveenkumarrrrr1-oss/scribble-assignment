@@ -98,6 +98,18 @@ class RoomStore {
     this.setRoomSnapshot(response.room);
     return response.room;
   }
+
+  async startRoom() {
+    if (!this.state.room || !this.state.participantId) {
+      throw new Error("Unable to start room");
+    }
+
+    const roomCode = this.state.room.code;
+    const participantId = this.state.participantId;
+    const response = await this.withLoading(() => api.startRoom(roomCode, participantId));
+    this.setRoomSnapshot(response.room);
+    return response.room;
+  }
 }
 
 const RoomStoreContext = createContext<RoomStore | null>(null);
