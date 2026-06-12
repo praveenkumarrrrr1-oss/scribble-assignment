@@ -8,6 +8,11 @@ export const joinRoomSchema = z.object({
   playerName: z.string().trim().min(1, { message: "Player name is required." })
 });
 
+export const guessRoomSchema = z.object({
+  participantId: z.string(),
+  guessText: z.string().trim().min(1, { message: "Guess is required." })
+});
+
 export const roomCodeParamsSchema = z.object({
   code: z.string()
 });
