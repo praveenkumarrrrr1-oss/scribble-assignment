@@ -22,6 +22,7 @@ export function GamePage() {
   }
 
   const viewer = room.participants.find((participant) => participant.id === participantId) ?? null;
+  const isDrawer = room.viewerRole === "drawer";
 
   return (
     <section className="panel game-page">
@@ -37,6 +38,10 @@ export function GamePage() {
         <aside className="game-page__sidebar game-page__sidebar--left">
           <Scoreboard />
           <ResultPanel />
+          <Card title="Your Role">
+            <p>{isDrawer ? "Drawer" : "Guesser"}</p>
+            {isDrawer ? <p style={{ marginTop: '8px' }}>Secret word: <strong>{room.secretWord}</strong></p> : <p style={{ marginTop: '8px' }}>Your word is hidden until the round ends.</p>}
+          </Card>
         </aside>
 
         <div className="game-page__main">

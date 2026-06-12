@@ -45,12 +45,12 @@
 
 **Independent Test**: Start a game with two players and verify drawer role and word visibility.
 
-- [ ] T017 [US2] Add deterministic word selection logic to `backend/src/services/roomStore.ts`
-- [ ] T018 [US2] Add round state and drawer assignment to `backend/src/models/game.ts`
-- [ ] T019 [US2] Update `backend/src/services/roomStore.ts` to initialize game round data on start
-- [ ] T020 [US2] Extend `backend/src/services/roomStore.ts` `toRoomSnapshot()` to hide the secret word from non-drawers
-- [ ] T021 [US2] Update `frontend/src/pages/GamePage.tsx` to display the secret word only for the drawer and show a role indicator
-- [ ] T022 [US2] Add player name trimming and validation to `frontend/src/pages/CreateRoomPage.tsx` and `frontend/src/pages/JoinRoomPage.tsx`
+- [X] T017 [US2] Add deterministic word selection logic to `backend/src/services/roomStore.ts`
+- [X] T018 [US2] Add round state and drawer assignment to `backend/src/models/game.ts`
+- [X] T019 [US2] Update `backend/src/services/roomStore.ts` to initialize game round data on start
+- [X] T020 [US2] Extend `backend/src/services/roomStore.ts` `toRoomSnapshot()` to hide the secret word from non-drawers
+- [X] T021 [US2] Update `frontend/src/pages/GamePage.tsx` to display the secret word only for the drawer and show a role indicator
+- [X] T022 [US2] Add player name trimming and validation to `frontend/src/pages/CreateRoomPage.tsx` and `frontend/src/pages/JoinRoomPage.tsx`
 
 ---
 

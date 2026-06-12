@@ -7,11 +7,17 @@ export interface Participant {
   joinedAt: string;
 }
 
+export interface ActiveRound {
+  drawerId: string;
+  secretWord: string;
+}
+
 export interface Room {
   code: string;
   status: RoomStatus;
   hostId: string;
   participants: Participant[];
+  activeRound?: ActiveRound;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +29,9 @@ export interface RoomSnapshot {
   participants: Participant[];
   availableWords: string[];
   roles: ParticipantRole[];
+  drawerId?: string;
+  viewerRole?: ParticipantRole;
+  secretWord?: string;
 }
 
 export interface RoomSessionResponse {

@@ -30,7 +30,7 @@ function generateUniqueCode() {
 }
 
 function displayName(name?: string) {
-  return name || "Player";
+  return name?.trim() || "Player";
 }
 
 function createParticipant(name?: string): Participant {
@@ -39,6 +39,12 @@ function createParticipant(name?: string): Participant {
     name: displayName(name),
     joinedAt: now()
   };
+}
+
+function chooseSecretWord(code: string) {
+  const hash = [...code].reduce((sum, character) => sum + character.charCodeAt(0), 0);
+  const index = hash % STARTER_WORDS.length;
+  return STARTER_WORDS[index];
 }
 
 function cloneRoom(room: Room) {
@@ -105,7 +111,13 @@ export function startRoom(code: string, participantId: string) {
     throw new Error("At least two players are required to start the game");
   }
 
+  const secretWord = chooseSecretWord(room.code);
+
   room.status = "active";
+  room.activeRound = {
+    drawerId: room.hostId,
+    secretWord
+  };
   room.updatedAt = now();
   rooms.set(room.code, room);
 
@@ -124,7 +136,8 @@ export function saveRoom(room: Room) {
 }
 
 export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSnapshot {
-  void viewerParticipantId;
+  const activeRound = room.activeRound;
+  const isViewerDrawer = activeRound?.drawerId === viewerParticipantId;
 
   return {
     code: room.code,
@@ -132,6 +145,9 @@ export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSn
     hostId: room.hostId,
     participants: room.participants.map((participant) => ({ ...participant })),
     availableWords: listWords(),
-    roles: [...STARTER_ROLES]
+    roles: [...STARTER_ROLES],
+    drawerId: activeRound?.drawerId,
+    viewerRole: activeRound ? (isViewerDrawer ? "drawer" : "guesser") : undefined,
+    secretWord: activeRound && isViewerDrawer ? activeRound.secretWord : undefined
   };
 }
