@@ -37,6 +37,7 @@ function createParticipant(name?: string): Participant {
   return {
     id: randomUUID(),
     name: displayName(name),
+    score: 0,
     joinedAt: now()
   };
 }
@@ -45,6 +46,23 @@ function chooseSecretWord(code: string) {
   const hash = [...code].reduce((sum, character) => sum + character.charCodeAt(0), 0);
   const index = hash % STARTER_WORDS.length;
   return STARTER_WORDS[index];
+}
+
+function normalizeGuess(guessText: string) {
+  return guessText.trim();
+}
+
+function createGuess(participant: Participant, text: string) {
+  const normalizedText = normalizeGuess(text);
+
+  return {
+    id: randomUUID(),
+    participantId: participant.id,
+    participantName: participant.name,
+    text: normalizedText,
+    isCorrect: false,
+    createdAt: now()
+  };
 }
 
 function cloneRoom(room: Room) {
@@ -62,6 +80,8 @@ export function createRoom(playerName?: string) {
     status: "lobby",
     hostId: participant.id,
     participants: [participant],
+    guesses: [],
+    canvasCleared: false,
     createdAt: now(),
     updatedAt: now()
   };
@@ -116,8 +136,103 @@ export function startRoom(code: string, participantId: string) {
   room.status = "active";
   room.activeRound = {
     drawerId: room.hostId,
-    secretWord
+    secretWord,
+    isFinished: false
   };
+  room.guesses = [];
+  room.canvasCleared = false;
+  room.updatedAt = now();
+  rooms.set(room.code, room);
+
+  return cloneRoom(room);
+}
+
+export function submitGuess(code: string, participantId: string, guessText: string) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    return null;
+  }
+
+  if (room.status !== "active" || !room.activeRound || room.activeRound.isFinished) {
+    throw new Error("Game is not active");
+  }
+
+  if (room.activeRound.drawerId === participantId) {
+    throw new Error("Drawer cannot submit guesses");
+  }
+
+  const participant = room.participants.find((item) => item.id === participantId);
+
+  if (!participant) {
+    return null;
+  }
+
+  const normalizedGuess = normalizeGuess(guessText);
+
+  if (!normalizedGuess) {
+    throw new Error("Guess is required");
+  }
+
+  const guess = createGuess(participant, normalizedGuess);
+  const isCorrect = guess.text.toLowerCase() === room.activeRound.secretWord.toLowerCase();
+  guess.isCorrect = isCorrect;
+
+  room.guesses.push(guess);
+
+  if (isCorrect) {
+    participant.score += 100;
+    room.activeRound.isFinished = true;
+    room.activeRound.finishedAt = now();
+  }
+
+  room.updatedAt = now();
+  rooms.set(room.code, room);
+
+  return cloneRoom(room);
+}
+
+export function clearCanvas(code: string, participantId: string) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    return null;
+  }
+
+  if (room.status !== "active" || !room.activeRound || room.activeRound.isFinished) {
+    throw new Error("Game is not active");
+  }
+
+  if (room.activeRound.drawerId !== participantId) {
+    throw new Error("Only the drawer can clear the canvas");
+  }
+
+  room.canvasCleared = true;
+  room.updatedAt = now();
+  rooms.set(room.code, room);
+
+  return cloneRoom(room);
+}
+
+export function restartRoom(code: string, participantId: string) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    return null;
+  }
+
+  if (room.status !== "active" || !room.activeRound || !room.activeRound.isFinished) {
+    throw new Error("Round is not finished");
+  }
+
+  if (room.hostId !== participantId) {
+    throw new Error("Only the host can restart the game");
+  }
+
+  room.status = "lobby";
+  room.activeRound = undefined;
+  room.guesses = [];
+  room.canvasCleared = false;
   room.updatedAt = now();
   rooms.set(room.code, room);
 
@@ -138,6 +253,7 @@ export function saveRoom(room: Room) {
 export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSnapshot {
   const activeRound = room.activeRound;
   const isViewerDrawer = activeRound?.drawerId === viewerParticipantId;
+  const roundFinished = activeRound?.isFinished === true;
 
   return {
     code: room.code,
@@ -148,6 +264,10 @@ export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSn
     roles: [...STARTER_ROLES],
     drawerId: activeRound?.drawerId,
     viewerRole: activeRound ? (isViewerDrawer ? "drawer" : "guesser") : undefined,
-    secretWord: activeRound && isViewerDrawer ? activeRound.secretWord : undefined
+    secretWord:
+      activeRound && (isViewerDrawer || roundFinished) ? activeRound.secretWord : undefined,
+    guesses: [...room.guesses],
+    canvasCleared: room.canvasCleared,
+    canRestartGame: roundFinished
   };
 }

@@ -20,6 +20,8 @@ export interface Guess {
 export interface ActiveRound {
   drawerId: string;
   secretWord: string;
+  isFinished: boolean;
+  finishedAt?: string;
 }
 
 export interface Room {
@@ -46,6 +48,7 @@ export interface RoomSnapshot {
   secretWord?: string;
   guesses: Guess[];
   canvasCleared: boolean;
+  canRestartGame: boolean;
 }
 
 export interface RoomSessionResponse {
